@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>My overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#22346E; --ink:#1D2A55; --soft:#6B77A3; --line:#E6ECFA;
+  --g-page:linear-gradient(180deg,#FDF6FF 0%,#EFF6FF 55%,#FFF9F0 100%);
+  --g-cycle1:linear-gradient(90deg,#DCEBFF,#F2E9FF);
+  --g-cycle2:linear-gradient(90deg,#FFE4F1,#FFF0E2);
+  --g-cycle3:linear-gradient(90deg,#FFEDD8,#FFF8D9);
+  --g-cycle4:linear-gradient(90deg,#FFF7D2,#E3FBEF);
+  --g-panel:linear-gradient(135deg,#E3F0FF,#F3E9FF);
+  --g-btn:linear-gradient(90deg,#FFD1E4,#FFE0C7);
+  --g-save:linear-gradient(90deg,#FFF3B8,#FFE29A);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--g-page);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5;padding:24px 16px 60px;min-height:100vh}
+.wrap{max-width:800px;margin:0 auto}
+h1{font-family:'Baloo 2',cursive;font-weight:700;font-size:32px;color:var(--navy);line-height:1.1}
+.sub{color:var(--soft);margin-top:4px;max-width:58ch}
+
+.savebar{display:flex;align-items:center;gap:10px;margin:14px 0 4px}
+.savebtn{background:var(--g-save);color:var(--navy);border:none;border-radius:999px;padding:7px 18px;font-weight:700;font-family:'DM Sans',sans-serif;font-size:13.5px;cursor:pointer;box-shadow:0 1px 4px rgba(34,52,110,.12)}
+.savebtn:focus-visible,.seg:focus-visible,.pdf:focus-visible,.notebtn:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+.savemsg{font-size:12.5px;color:var(--soft)}
+.savemsg.ok{color:#0F6E56;font-weight:700}
+.savemsg.warn{color:#A33B2E;font-weight:700}
+
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 8px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 16px;min-width:128px;flex:1;box-shadow:0 1px 6px rgba(34,52,110,.06)}
+.stat b{font-family:'Baloo 2',cursive;font-size:21px;font-weight:600;display:block;color:var(--navy)}
+.stat span{font-size:12.5px;color:var(--soft)}
+
+.controls{background:linear-gradient(135deg,#2A3C7E,#4A3D8F);color:#fff;border-radius:22px;padding:16px 18px;margin:14px 0 26px;display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end}
+.controls .grp{display:flex;flex-direction:column;gap:6px}
+.controls label{font-size:12px;opacity:.85}
+.segs{display:flex;gap:6px;flex-wrap:wrap}
+.seg{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:999px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer}
+.seg[aria-pressed="true"]{background:#FFE9A8;color:var(--navy);font-weight:700;border-color:#FFE9A8}
+.pdf{margin-left:auto;background:var(--g-btn);color:var(--navy);border:none;border-radius:999px;padding:9px 18px;font-weight:700;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer}
+.controls .hint{font-size:12px;opacity:.8;flex-basis:100%}
+
+.cycle{border:2px dashed #A9B8E8;border-radius:22px;padding:14px;margin:26px 0;background:rgba(255,255,255,.75);backdrop-filter:blur(2px)}
+.chead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-radius:14px;padding:9px 16px;margin-bottom:10px}
+.chead h2{font-family:'Baloo 2',cursive;font-weight:700;font-size:19px;color:var(--navy)}
+.chead .range{color:var(--navy);opacity:.75;font-size:13px}
+.rows{display:flex;flex-direction:column;gap:8px}
+
+.mdiv{display:flex;align-items:center;gap:10px;padding:4px 8px 0;font-size:12px;color:var(--soft)}
+.mdiv i{flex:1;border-top:1px solid var(--line)}
+
+.row{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 1px 4px rgba(34,52,110,.05)}
+.row .num{font-size:12px;color:var(--soft);min-width:22px}
+.row .date{font-weight:500;flex:1;min-width:150px}
+.row .dose{font-size:13.5px;color:var(--soft)}
+.pill{font-size:12.5px;font-weight:700;border-radius:999px;padding:5px 13px;white-space:nowrap;color:var(--navy)}
+.row.today{outline:2px solid var(--navy)}
+.row.splitrow{border:1.5px dashed var(--navy)}
+.tag{font-size:11.5px;border-radius:7px;padding:3px 9px;font-weight:700}
+.tag.age{background:linear-gradient(90deg,#FFF3B8,#FFE6A3);color:#6B5405}
+.tag.done{background:var(--navy);color:#fff}
+.handover{background:#fff;border:1.5px dashed var(--navy);border-radius:12px;padding:8px 14px;font-size:13px;color:var(--navy)}
+
+.update{margin-top:12px;background:var(--g-panel);border-radius:16px;padding:12px 16px;color:var(--navy)}
+.update h3{font-family:'Baloo 2',cursive;font-weight:700;font-size:15.5px;margin-bottom:4px}
+.update p{font-size:13.5px;margin:3px 0}
+
+.wk{padding:2px 4px}
+.wkline{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--soft);padding:2px 8px}
+.wkline .dash{flex:1;border-top:1px dashed #CBD8F2}
+.wkline input{width:76px;border:1px solid var(--line);border-radius:8px;padding:4px 8px;font-family:'DM Sans',sans-serif;font-size:13px;background:#fff;color:var(--ink)}
+.wkline .delta{font-weight:700;min-width:56px;text-align:right}
+.wkline .delta.down{color:#0F6E56}
+.wkline .delta.up{color:#A33B2E}
+.notebtn{background:linear-gradient(90deg,#FFE0C7,#FFD9E8);color:var(--navy);border:none;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer}
+.wknote{display:none;margin:6px 8px 4px}
+.wknote.open{display:block}
+.wknote textarea{width:100%;min-height:54px;border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:14px;background:#fff;color:var(--ink);resize:vertical}
+.wknote textarea::placeholder{color:#AFBAD6}
+
+.pen-end{background:linear-gradient(90deg,#2A3C7E,#4A3D8F);color:#fff;border-radius:14px;padding:10px 16px;font-size:13.5px;margin-top:16px}
+.footnote{margin-top:30px;color:var(--soft);font-size:13px;max-width:68ch}
+.bottombar{margin-top:18px}
+
+@media print{
+  body{padding:0;background:#fff}
+  .controls,.pdf,.notebtn,.savebar,.savebtn{display:none!important}
+  .wknote{display:block!important}
+  .wknote textarea{border:none;padding:4px 10px;min-height:0}
+  .row,.update,.cycle{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>My Mounjaro overview</h1>
+  <p class="sub">Tirzepatide micro-dosing in 4-week blocks &mdash; the rhythm a pen normally lives by. Change the dose or interval and everything from today onward redraws; past injections stay as they happened.</p>
+
+  <div class="savebar">
+    <button class="savebtn" type="button" data-save>Save</button>
+    <span class="savemsg" data-savemsg>Notes and weights save in this browser on this device.</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b id="statNext">&ndash;</b><span>next injection</span></div>
+    <div class="stat"><b id="statWeekly">&ndash;</b><span>average per week</span></div>
+    <div class="stat"><b id="statPen">&ndash;</b><span>current pen</span></div>
+    <div class="stat"><b id="statLoss">&minus;5.0 kg</b><span>lost so far</span></div>
+  </div>
+
+  <div class="controls">
+    <div class="grp">
+      <label id="lblDose">Dose from today onward</label>
+      <div class="segs" role="group" aria-labelledby="lblDose" id="doseSegs"></div>
+    </div>
+    <div class="grp">
+      <label id="lblInt">Every</label>
+      <div class="segs" role="group" aria-labelledby="lblInt" id="intSegs"></div>
+    </div>
+    <button class="pdf" type="button" onclick="window.print()">Download PDF</button>
+    <p class="hint">Pens: 2 &times; 2.5&nbsp;mg KwikPen, then 2 &times; 5&nbsp;mg KwikPen &mdash; each holds 4 full doses (240 clicks). On a 2.5&nbsp;mg pen 1&nbsp;mg&nbsp;=&nbsp;24 clicks; on a 5&nbsp;mg pen 1&nbsp;mg&nbsp;=&nbsp;12 clicks. Each pill shows the clicks to dial for that injection.</p>
+  </div>
+
+  <div id="schedule"></div>
+
+  <div class="savebar bottombar">
+    <button class="savebtn" type="button" data-save>Save</button>
+    <span class="savemsg" data-savemsg></span>
+  </div>
+
+  <p class="footnote" id="foot"></p>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- state & persistence ---------- */
+const KEY = "mj_state_v1";
+let state = {dose:1.5, interval:5, w:{}, n:{}};
+function loadState(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){ const s = JSON.parse(raw); state = Object.assign(state, s); state.w = s.w||{}; state.n = s.n||{}; }
+  }catch(e){}
+}
+function saveState(manual){
+  let ok = true;
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch(e){ ok = false; }
+  const msgs = document.querySelectorAll("[data-savemsg]");
+  const t = new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  msgs.forEach(m=>{
+    if(ok){ m.textContent = "Saved \u2713 "+t; m.className = "savemsg ok"; }
+    else { m.textContent = "Couldn\u2019t save \u2014 this browser is blocking storage. Try opening the page normally (not in a preview or private window)."; m.className = "savemsg warn"; }
+  });
+  if(ok && !manual){ /* soften autosave message */ msgs.forEach(m=> m.className="savemsg"); }
+}
+let autosaveTimer = null;
+function autosave(){ clearTimeout(autosaveTimer); autosaveTimer = setTimeout(()=>saveState(false), 400); }
+document.querySelectorAll("[data-save]").forEach(b=> b.addEventListener("click", ()=>saveState(true)));
+
+/* ---------- fixed facts ---------- */
+const D = (y,m,d)=> new Date(Date.UTC(y,m-1,d,12));
+const START = D(2026,8,20);
+const CYCLE = 28;
+const HISTORY = [
+  {date:D(2026,8,20), mg:2.5, note:"start, full dose, 11:30"},
+  {date:D(2026,8,26), mg:1.0, note:"13:00"},
+  {date:D(2026,8,31), mg:1.5, note:"12:00"}
+];
+const PENS = [
+  {label:"Pen 1", strength:2.5},
+  {label:"Pen 2", strength:2.5},
+  {label:"Pen 3", strength:5},
+  {label:"Pen 4", strength:5}
+];
+const CLICKS_PER_PEN = 240;
+const TODAY = (()=>{ const n=new Date(); return new Date(Date.UTC(n.getFullYear(),n.getMonth(),n.getDate(),12)); })();
+
+const CYCLE_GRADS = ["var(--g-cycle1)","var(--g-cycle2)","var(--g-cycle3)","var(--g-cycle4)"];
+const CYCLE_PILLS = ["#DCEBFF","#FFE4F1","#FFEDD8","#FFF7D2"];
+
+const DOSES = [1.0,1.25,1.5,2.0,2.5];
+const INTS  = [4,5,6,7];
+
+/* ---------- helpers ---------- */
+const DAY = 86400000;
+const fmt = d => d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"});
+const fmtShort = d => d.toLocaleDateString("en-GB",{day:"numeric",month:"short",timeZone:"UTC"});
+const monthName = d => d.toLocaleDateString("en-GB",{month:"long",timeZone:"UTC"});
+const monthKey = d => d.getUTCFullYear()+"-"+d.getUTCMonth();
+const addDays = (d,n)=> new Date(d.getTime()+n*DAY);
+const daysBetween = (a,b)=> Math.round((b-a)/DAY);
+const clicksFor = (mg,strength)=> Math.round(mg/(strength/60));
+const mgOf = (clicks,strength)=> clicks*(strength/60);
+const r1 = x => (Math.round(x*100)/100).toString();
+const weekOf = d => Math.floor(daysBetween(START,d)/7)+1;
+
+/* ---------- schedule engine ---------- */
+function buildEvents(){
+  const events = [];
+  HISTORY.forEach(h=>events.push({date:h.date, mg:h.mg, fixed:true, note:h.note}));
+  let last = HISTORY[HISTORY.length-1].date;
+  let d = addDays(last, state.interval);
+  for(let i=0;i<140;i++){ events.push({date:d, mg:state.dose, fixed:false}); d = addDays(d, state.interval); }
+
+  let penIdx = 0, left = CLICKS_PER_PEN, opened = null;
+  const out = [], opens = [];
+  for(const ev of events){
+    if(penIdx >= PENS.length){ out.push({end:true, date:ev.date}); break; }
+    const pen = PENS[penIdx];
+    if(opened===null){ opened = ev.date; opens.push({date:ev.date, pen}); }
+    const need = clicksFor(ev.mg, pen.strength);
+    const rec = {date:ev.date, mg:ev.mg, fixed:ev.fixed, note:ev.note, parts:[], penAgeFlags:[]};
+    if(left >= need){
+      left -= need;
+      rec.parts.push({pen, clicks:need, mg:ev.mg});
+      if(daysBetween(opened, ev.date) > 30) rec.penAgeFlags.push({pen, age:daysBetween(opened, ev.date)});
+      if(left===0){ penIdx++; left=CLICKS_PER_PEN; rec.penDone=pen.label; opened=null; }
+      out.push(rec);
+    } else {
+      const mgA = mgOf(left, pen.strength);
+      if(left>0){
+        rec.parts.push({pen, clicks:left, mg:mgA});
+        if(daysBetween(opened, ev.date) > 30) rec.penAgeFlags.push({pen, age:daysBetween(opened, ev.date)});
+      }
+      rec.penDone = pen.label;
+      penIdx++; opened = ev.date;
+      if(penIdx >= PENS.length){ rec.incomplete = true; out.push(rec); out.push({end:true, date:ev.date}); break; }
+      const pen2 = PENS[penIdx];
+      opens.push({date:ev.date, pen:pen2, viaSplit:true});
+      const need2 = clicksFor(ev.mg - mgA, pen2.strength);
+      left = CLICKS_PER_PEN - need2;
+      rec.parts.push({pen:pen2, clicks:need2, mg:ev.mg - mgA, isNew:true});
+      rec.split = rec.parts.length>1;
+      out.push(rec);
+    }
+    rec.state = {pen:PENS[Math.min(penIdx,PENS.length-1)], left, penIdx, opened};
+  }
+  return {events:out, opens};
+}
+
+/* ---------- render ---------- */
+const schedEl = document.getElementById("schedule");
+
+function weekNoteRow(wkDate, weekN){
+  const key = String(wkDate.getTime());
+  const div = document.createElement("div");
+  div.className = "wk";
+  div.innerHTML =
+    '<div class="wkline"><span>week '+weekN+' \u00b7 '+fmt(wkDate)+'</span><span class="dash"></span>'+
+    '<label>weight <input type="number" step="0.1" inputmode="decimal" data-wk="'+key+'" placeholder="kg"></label>'+
+    '<span class="delta" data-delta></span>'+
+    '<button class="notebtn" type="button">+ note</button></div>'+
+    '<div class="wknote"><textarea placeholder="How did this week feel? Hunger, cravings, energy, stomach, taste\u2026"></textarea></div>';
+  const inp = div.querySelector("input");
+  inp.value = state.w[key] || "";
+  inp.addEventListener("input", ()=>{ state.w[key] = inp.value; autosave(); updateDeltas(); });
+  const ta = div.querySelector("textarea");
+  ta.value = state.n[key] || "";
+  const noteWrap = div.querySelector(".wknote");
+  if(ta.value) noteWrap.classList.add("open");
+  ta.addEventListener("input", ()=>{ state.n[key] = ta.value; autosave(); });
+  div.querySelector(".notebtn").addEventListener("click", ()=> noteWrap.classList.toggle("open"));
+  return div;
+}
+
+function updatePanel(cycleN, cycleEnd, lastState, cycleTotal, isPast, opens){
+  const div = document.createElement("div");
+  div.className = "update";
+  let html = '<h3>4-week update \u00b7 after week '+(cycleN*4)+' ('+fmtShort(cycleEnd)+')</h3>';
+  html += '<p>This block: <b>'+r1(cycleTotal)+' mg</b> '+(isPast? 'taken':'planned')+'.</p>';
+  if(lastState && lastState.penIdx < PENS.length){
+    const s = lastState;
+    const perDose = clicksFor(state.dose, s.pen.strength);
+    const dosesLeft = Math.floor(s.left / perDose);
+    const partial = s.left - dosesLeft*perDose;
+    html += '<p><b>'+s.pen.label+'</b> ('+s.pen.strength+' mg pen) has <b>'+s.left+' clicks</b> \u2248 '+r1(mgOf(s.left,s.pen.strength))+' mg left \u2014 '+
+      (dosesLeft>0 ? dosesLeft+' more full dose'+(dosesLeft>1?'s':'')+' of '+r1(state.dose)+' mg (\u2248 '+(dosesLeft*state.interval)+' days)' : 'not a full dose anymore')+
+      (partial>0 && dosesLeft>0 ? ', then '+partial+' clicks for a hand-over' : '')+
+      (partial>0 && dosesLeft===0 ? ' \u2014 the '+partial+' clicks go into a hand-over dose' : '')+'.</p>';
+    if(s.opened){
+      const age = daysBetween(s.opened, cycleEnd);
+      if(age > 30) html += '<p>This pen is <b>'+age+' days</b> past opening \u2014 over the 30-day label, so check the liquid is clear and expect it can be a little less strong.</p>';
+    }
+  }
+  const upcoming = opens.filter(o=> o.date > cycleEnd && o.date <= addDays(cycleEnd, CYCLE));
+  for(const o of upcoming){
+    const w = weekOf(o.date);
+    html += '<p><b>'+o.pen.label+'</b> ('+o.pen.strength+' mg pen) opens <b>'+fmt(o.date)+'</b> \u2014 in week '+w+
+      (o.viaSplit? ', as part of a hand-over dose':'')+'.</p>';
+    const prevPen = PENS[PENS.indexOf(o.pen)-1];
+    if(prevPen && prevPen.strength !== o.pen.strength){
+      const cNew = clicksFor(state.dose, o.pen.strength);
+      const cOld = clicksFor(state.dose, prevPen.strength);
+      const dosesPerPen = Math.floor(CLICKS_PER_PEN / cNew);
+      const lastsDays = (dosesPerPen-1)*state.interval;
+      const dosesIn30 = Math.floor(30/state.interval)+1;
+      const leftAt30 = Math.max(CLICKS_PER_PEN - dosesIn30*cNew, 0);
+      html += '<p>Different strength, so the clicks change: your '+r1(state.dose)+' mg = <b>'+cNew+' clicks</b> on this pen (it was '+cOld+'). '+
+        'A fresh '+o.pen.strength+' mg pen holds 240 clicks = <b>'+dosesPerPen+' doses</b> \u2248 <b>'+lastsDays+' days</b> at every '+state.interval+' days. '+
+        'Its 30-day label passes with \u2248 '+leftAt30+' clicks ('+r1(mgOf(leftAt30,o.pen.strength))+' mg) still inside \u2014 you\u2019ve chosen with your doctor to keep using it, so from there the age notes appear on each dose.</p>';
+    }
+  }
+  div.innerHTML = html;
+  return div;
+}
+
+function render(){
+  const {events, opens} = buildEvents();
+  schedEl.innerHTML = "";
+  let curCycle = -1, cycleWrap = null, rowsEl = null, cycleTotal = 0, lastState = null, lastDate = null;
+  let curMonth = null, num = 0;
+  let nextWeekMark = addDays(START,7);
+  let weekN = 1;
+
+  const closeCycle = ()=>{
+    if(!cycleWrap) return;
+    const cycleEnd = addDays(START, (curCycle+1)*CYCLE - 1);
+    const isPast = cycleEnd < TODAY;
+    cycleWrap.appendChild(updatePanel(curCycle+1, cycleEnd, lastState, cycleTotal, isPast, opens));
+  };
+
+  for(const ev of events){
+    if(ev.end){
+      closeCycle(); cycleWrap = null;
+      const div = document.createElement("div");
+      div.className = "pen-end";
+      div.textContent = "All four pens are finished around "+fmt(ev.date)+" \u2014 restock before this date.";
+      schedEl.appendChild(div);
+      break;
+    }
+    const cyc = Math.floor(daysBetween(START, ev.date)/CYCLE);
+    if(cyc !== curCycle){
+      closeCycle();
+      curCycle = cyc; cycleTotal = 0; curMonth = null;
+      const c0 = addDays(START, cyc*CYCLE), c1 = addDays(START, (cyc+1)*CYCLE-1);
+      cycleWrap = document.createElement("section");
+      cycleWrap.className = "cycle";
+      cycleWrap.dataset.pill = CYCLE_PILLS[cyc % CYCLE_PILLS.length];
+      cycleWrap.innerHTML = '<div class="chead" style="background:'+CYCLE_GRADS[cyc % CYCLE_GRADS.length]+'"><h2>Weeks '+(cyc*4+1)+'\u2013'+(cyc*4+4)+'</h2>'+
+        '<span class="range">'+fmtShort(c0)+' \u2013 '+fmtShort(c1)+'</span></div><div class="rows"></div>';
+      schedEl.appendChild(cycleWrap);
+      rowsEl = cycleWrap.querySelector(".rows");
+    }
+
+    while(ev.date >= nextWeekMark){
+      rowsEl.appendChild(weekNoteRow(nextWeekMark, weekN+1));
+      nextWeekMark = addDays(nextWeekMark,7); weekN++;
+    }
+
+    const mk = monthKey(ev.date);
+    if(mk !== curMonth){
+      curMonth = mk;
+      const md = document.createElement("div");
+      md.className = "mdiv";
+      md.innerHTML = "<span>"+monthName(ev.date)+"</span><i></i>";
+      rowsEl.appendChild(md);
+    }
+
+    num++;
+    cycleTotal += ev.incomplete ? ev.parts.reduce((s,p)=>s+p.mg,0) : ev.mg;
+    lastState = ev.state; lastDate = ev.date;
+
+    const pillBg = cycleWrap.dataset.pill;
+    const row = document.createElement("div");
+    row.className = "row"+(ev.split?" splitrow":"")+(daysBetween(TODAY,ev.date)===0?" today":"");
+    let html = '<span class="num">'+num+'</span><span class="date">'+fmt(ev.date)+
+      (ev.note? ' \u00b7 '+ev.note :"")+(daysBetween(TODAY,ev.date)===0?' \u00b7 today':"")+'</span>';
+    html += '<span class="dose">'+r1(ev.mg)+' mg</span>';
+    for(const p of ev.parts){
+      html += '<span class="pill" style="background:'+pillBg+'">'+p.pen.label+(p.isNew?' new':'')+' \u00b7 dial '+p.clicks+' clicks</span>';
+    }
+    for(const f of ev.penAgeFlags){
+      html += '<span class="tag age">'+f.pen.label+' is '+f.age+' days old \u2014 check liquid is clear</span>';
+    }
+    if(ev.penDone && !ev.split) html += '<span class="tag done">'+ev.penDone+' empty</span>';
+    if(ev.incomplete) html += '<span class="tag age">not enough left in the cupboard for the full dose</span>';
+    row.innerHTML = html;
+    rowsEl.appendChild(row);
+
+    if(ev.split){
+      const a = ev.parts[0], b = ev.parts[1];
+      const hand = document.createElement("div");
+      hand.className = "handover";
+      hand.innerHTML = "<b>"+a.pen.label+" hand-over:</b> "+a.clicks+" clicks (\u2248 "+r1(a.mg)+" mg) were still in "+a.pen.label+
+        " \u2014 use those first, change the needle, then dial <b>"+b.clicks+" clicks</b> (\u2248 "+r1(b.mg)+" mg) from the new "+b.pen.label+
+        (b.pen.strength!==a.pen.strength ? " (different strength: 1 mg = "+clicksFor(1,b.pen.strength)+" clicks on this pen)" : "")+".";
+      rowsEl.appendChild(hand);
+    }
+  }
+  closeCycle();
+  updateDeltas();
+  updateStats(events);
+}
+
+function updateDeltas(){
+  const inputs = [...document.querySelectorAll('input[data-wk]')];
+  let prev = null, first = null, last = null;
+  for(const inp of inputs){
+    const v = parseFloat(inp.value);
+    const deltaEl = inp.closest(".wkline").querySelector("[data-delta]");
+    if(!isNaN(v)){
+      if(first===null) first = v;
+      last = v;
+      if(prev!==null){
+        const d = v - prev;
+        deltaEl.textContent = (d<=0?"\u2212":"+")+Math.abs(d).toFixed(1)+" kg";
+        deltaEl.className = "delta "+(d<=0?"down":"up");
+      } else { deltaEl.textContent = "start"; deltaEl.className="delta"; }
+      prev = v;
+    } else { deltaEl.textContent = ""; }
+  }
+  const lossEl = document.getElementById("statLoss");
+  if(first!==null && last!==null && first!==last){
+    const total = last-first;
+    lossEl.innerHTML = (total<=0?"&minus;":"+")+Math.abs(total).toFixed(1)+" kg";
+  }
+}
+
+function updateStats(events){
+  const next = events.find(e=>!e.end && e.date>TODAY);
+  document.getElementById("statNext").textContent = next? fmt(next.date) : "\u2013";
+  document.getElementById("statWeekly").textContent = r1(state.dose*7/state.interval)+" mg";
+  if(next && next.parts && next.parts.length){
+    const p = next.parts[0];
+    document.getElementById("statPen").textContent = p.pen.label+" \u00b7 "+p.pen.strength+" mg";
+  }
+  document.getElementById("foot").textContent =
+    "Doses under 60 clicks and pens used past their 30-day label are off-label choices made together with your doctor. "+
+    "Past 30 days the medicine can slowly lose strength \u2014 if a dose suddenly feels weaker near the end of an old pen, that\u2019s the likely reason. "+
+    "Always: fresh needle each time, 2-click prime until a drop appears (primes are extra, on top of the counted clicks), liquid clear before injecting, never store the pen with a needle attached.";
+}
+
+function seg(parent, values, current, fmtFn, onPick){
+  parent.innerHTML="";
+  values.forEach(v=>{
+    const b=document.createElement("button");
+    b.className="seg"; b.type="button";
+    b.textContent=fmtFn(v);
+    b.setAttribute("aria-pressed", v===current ? "true":"false");
+    b.addEventListener("click",()=>onPick(v));
+    parent.appendChild(b);
+  });
+}
+function drawControls(){
+  seg(document.getElementById("doseSegs"), DOSES, state.dose, v=>r1(v)+" mg", v=>{state.dose=v;autosave();drawControls();render();});
+  seg(document.getElementById("intSegs"), INTS, state.interval, v=>v+" days", v=>{state.interval=v;autosave();drawControls();render();});
+}
+
+loadState();
+drawControls();
+render();
+})();
+</script>
+</body>
+</html>
